@@ -41,11 +41,15 @@ bun run build
 bash check-hashes.sh .output
 
 # Docker build (Bun) — fails consistently
+# Use --progress=plain to see the PASS/FAIL output from check-hashes.sh
+docker build --no-cache --progress=plain -t tw-repro .
+
+# Or build first, then run the check inside the container:
 docker build --no-cache -t tw-repro .
-# Look for PASS/FAIL in build output
+docker run --rm tw-repro bash check-hashes.sh .output
 
 # Docker build (Node) — same failure, confirms this is not Bun-specific
-docker build --no-cache -f Dockerfile.node -t tw-repro-node .
+docker build --no-cache --progress=plain -f Dockerfile.node -t tw-repro-node .
 ```
 
 The `@source` directive in `src/styles.css` points to `packages/ui/` which contains ~80 generated component files using diverse Tailwind utility classes. This creates enough CSS surface area for the environment divergence to produce a measurably different hash.
