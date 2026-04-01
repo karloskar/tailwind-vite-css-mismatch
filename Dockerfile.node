@@ -1,0 +1,32 @@
+# Reproduction: same bug, Node runtime instead of Bun.
+# Build: docker build --no-cache -f Dockerfile.node -t tw-repro-node .
+
+ARG NODE_VERSION=22
+
+# --- Build ---
+FROM node:${NODE_VERSION} AS build
+WORKDIR /app
+
+# Layer 1: install dependencies
+COPY package.json ./
+RUN npm install --legacy-peer-deps
+
+# Layer 2: copy source (separate layer from node_modules — triggers the bug)
+COPY packages/ packages/
+COPY src/ src/
+COPY vite.config.node.ts vite.config.ts
+COPY tsconfig.json ./
+
+RUN npx vite build
+
+# Verify CSS hashes
+COPY check-hashes.sh .
+RUN bash check-hashes.sh .output || true
+
+# --- Runtime ---
+FROM node:${NODE_VERSION}-slim
+WORKDIR /app
+COPY --from=build /app/.output .output
+COPY --from=build /app/check-hashes.sh .
+EXPOSE 3000
+CMD ["node", ".output/server/index.mjs"]

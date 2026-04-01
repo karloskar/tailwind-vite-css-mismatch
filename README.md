@@ -29,6 +29,7 @@ output, so styles fail to load.
 | `@tanstack/react-start` | 1.166+ (uses Vite Environment API) |
 | `nitro`                 | 3.x                                |
 | `bun`                   | 1.3                                |
+| `node`                  | 22                                 |
 
 ## Reproduce
 
@@ -39,10 +40,12 @@ bun install
 bun run build
 bash check-hashes.sh .output
 
-# Docker build — fails consistently
+# Docker build (Bun) — fails consistently
 docker build --no-cache -t tw-repro .
 # Look for PASS/FAIL in build output
 
+# Docker build (Node) — same failure, confirms this is not Bun-specific
+docker build --no-cache -f Dockerfile.node -t tw-repro-node .
 ```
 
 The `@source` directive in `src/styles.css` points to `packages/ui/` which contains ~80 generated component files using diverse Tailwind utility classes. This creates enough CSS surface area for the environment divergence to produce a measurably different hash.
