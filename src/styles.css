@@ -1,0 +1,37 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@source "../packages/ui";
+@source "../packages/extra-scan";
+
+@plugin "tailwind-scrollbar-hide";
+
+@layer utilities {
+  .container {
+    @apply xl:max-w-[64rem] 2xl:max-w-[64rem];
+  }
+  .stop-autofill-madness:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px oklch(0.25 0.012 72.45) inset;
+    box-shadow: 0 0 0px 1000px oklch(0.25 0.012 72.45) inset;
+    -webkit-text-fill-color: oklch(0.98 0.005 72.45);
+    @apply border-gray-300 bg-gray-100;
+  }
+  @keyframes move-bg {
+    to {
+      background-position: var(--bg-size) 0;
+    }
+  }
+  @keyframes thinking-dot {
+    0%,
+    80%,
+    100% {
+      opacity: 0.3;
+      transform: scale(0.8);
+    }
+    40% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+}
